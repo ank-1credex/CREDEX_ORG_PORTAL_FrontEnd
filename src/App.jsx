@@ -6,10 +6,12 @@ import ProjectUploadForm from "./components/managers/projectUpload";
 import EmployeeDash from "./components/employee/employeedashboard";
 import CreateContribution from "./components/employee/createContribution";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthContext from "./components/authContext/authContext";
 import PrivateRoute from "./components/privateRoutes/privateRoutes";
 import AllContributions from "./components/employee/allContributionOfEmployee";
+import ProjectList from "./components/managers/projectList";
+import Cookies from "js-cookie";
 
 function App() {
   const navigate = useNavigate();
@@ -28,6 +30,13 @@ function App() {
     setUser("employee");
     navigate("/");
   };
+
+  useEffect(() => {
+    if (Cookies.get("token")) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{ isLoggedIn: isLoggedIn, employees: employees }}
@@ -60,6 +69,7 @@ function App() {
             element={<CreateContribution />}
           />
           <Route path="/viewcontributions" element={<AllContributions />} />
+          <Route path="/projectlists" element={<ProjectList />} />
         </Route>
       </Routes>
     </AuthContext.Provider>

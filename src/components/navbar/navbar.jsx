@@ -35,7 +35,7 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
       console.error("Error fetching employee data:", error);
     }
   };
-
+  console.log(context.isLoggedIn);
   return (
     <AppBar position="static">
       <Toolbar>
@@ -83,6 +83,9 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
                 </Menu>
                 <Button color="inherit" component={Link} to="/projectUpload">
                   Create Project
+                </Button>
+                <Button color="inherit" component={Link} to="/projectlists">
+                  View Project
                 </Button>
               </>
             )}

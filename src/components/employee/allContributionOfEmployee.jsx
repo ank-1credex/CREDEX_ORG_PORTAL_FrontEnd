@@ -16,7 +16,6 @@ import axios from "axios";
 import AuthContext from "../authContext/authContext";
 
 const AllContributionOfEmployee = () => {
-  console.log("ankit");
   const [allContributions, setAllContributions] = useState([]);
   const context = useContext(AuthContext);
 
