@@ -20,7 +20,7 @@ function App() {
   const [employees, setEmployees] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [employeeData, setEmployeeData] = useState(null);
-  const [user, setUser] = useState({
+  const [currentUser, setCurrentUser] = useState({
     name: "",
     role: "employee",
   });
@@ -31,7 +31,7 @@ function App() {
     setIsLoggedIn(false);
     setEmployeeData(null);
     setEmployees([]);
-    setUser({
+    setCurrentUser({
       name: "",
       role: "employee",
     });
@@ -43,22 +43,22 @@ function App() {
   //     setIsLoggedIn(true);
   //   }
   // }, []);
-
-  console.log(employeeData);
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, employees: employees }}
+      value={{
+        isLoggedIn: isLoggedIn,
+        employees: employees,
+        currentUser: currentUser,
+      }}
     >
-      <Navbar
-        handleLogout={handleLogout}
-        setEmployeeData={setEmployeeData}
-        user={user}
-      />
+      <Navbar handleLogout={handleLogout} />
       <Routes>
         <Route path="/registration" element={<Registration />} />
         <Route
           path="/"
-          element={<Login handleLogin={handleLogin} setUser={setUser} />}
+          element={
+            <Login handleLogin={handleLogin} setCurrentUser={setCurrentUser} />
+          }
         />
         <Route element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
           <Route path="/projectUpload" element={<ProjectUploadForm />} />

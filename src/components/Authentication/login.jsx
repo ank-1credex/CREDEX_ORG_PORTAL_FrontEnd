@@ -26,7 +26,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 // eslint-disable-next-line react/prop-types
-export default function SignIn({ handleLogin, setUser }) {
+export default function SignIn({ handleLogin, setCurrentUser }) {
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -45,10 +45,16 @@ export default function SignIn({ handleLogin, setUser }) {
       );
       if (response.status === 200) {
         if (response.data.data.role === "employee") {
-          setUser(response.data.data.role);
+          setCurrentUser({
+            name: response.data.data.name,
+            role: response.data.data.role,
+          });
           navigate("/employee");
         } else if (response.data.data.role === "manager") {
-          setUser(response.data.data.role);
+          setCurrentUser({
+            name: response.data.data.name,
+            role: response.data.data.role,
+          });
           navigate("/managers");
         }
         handleLogin();

@@ -10,7 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import AuthContext from "../authContext/authContext";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 // eslint-disable-next-line react/prop-types
-const Navbar = ({ handleLogout, user }) => {
+const Navbar = ({ handleLogout }) => {
   let context = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -39,7 +39,7 @@ const Navbar = ({ handleLogout, user }) => {
           </>
         ) : (
           <>
-            {user === "manager" && (
+            {context.currentUser.role === "manager" && (
               <>
                 <Button
                   color="inherit"
@@ -56,7 +56,7 @@ const Navbar = ({ handleLogout, user }) => {
                 </Button>
               </>
             )}
-            {user === "employee" && (
+            {context.currentUser.role === "employee" && (
               <>
                 <Button
                   color="inherit"
@@ -101,7 +101,9 @@ const Navbar = ({ handleLogout, user }) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>{user}</MenuItem>
+                <MenuItem onClick={handleClose}>
+                  {context.currentUser.name}
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>

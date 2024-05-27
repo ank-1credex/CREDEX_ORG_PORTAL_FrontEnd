@@ -6,7 +6,7 @@ import AuthContext from "../authContext/authContext";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-const Managers = ({setEmployees }) => {
+const Managers = ({ setEmployees }) => {
   const context = useContext(AuthContext);
   useEffect(() => {
     if (context.isLoggedIn) {
@@ -22,7 +22,6 @@ const Managers = ({setEmployees }) => {
         )
         .then((response) => {
           setEmployees(response.data.data);
-          console.log(response.data.data);
         })
         .catch((error) => {
           console.error(

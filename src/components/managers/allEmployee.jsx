@@ -18,7 +18,6 @@ const AllEmployee = ({ setEmployeeData }) => {
   const context = useContext(AuthContext);
   const handleEmployeeClick = async (employeeName) => {
     try {
-      console.log(employeeName);
       const response = await axios.post(
         `http://localhost:4000/api/v1/getManager/allContributionByEmployee`,
         {
