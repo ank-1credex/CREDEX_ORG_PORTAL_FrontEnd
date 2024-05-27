@@ -50,7 +50,17 @@ const EmployeeTable = ({ employeeData }) => {
 
   if (!employeeData) {
     return (
-      <Typography variant="h6">Select an employee to view details</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <Typography variant="h4">NO Contrubution By this User</Typography>
+      </Box>
     );
   }
 

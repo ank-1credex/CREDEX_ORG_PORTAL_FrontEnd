@@ -29,8 +29,7 @@ const AllEmployee = ({ setEmployeeData }) => {
       );
       setEmployeeData(response.data.contributiions);
     } catch (error) {
-      if (error.response.status === 404) alert("no contribtuion found");
-      else alert("something went wrong");
+      // alert("something went wrong");
       setEmployeeData(null);
     }
   };

@@ -11,15 +11,9 @@ const Managers = ({ setEmployees }) => {
   useEffect(() => {
     if (context.isLoggedIn) {
       axios
-        .post(
-          "http://localhost:4000/api/v1/getManager/allMemberOfManager",
-          {
-            managers_name: "sumit ranjan",
-          },
-          {
-            withCredentials: true,
-          }
-        )
+        .get("http://localhost:4000/api/v1/getManager/allMemberOfManager", {
+          withCredentials: true,
+        })
         .then((response) => {
           setEmployees(response.data.data);
         })
