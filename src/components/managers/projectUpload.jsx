@@ -32,37 +32,33 @@ const ProjectUploadForm = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
+    axios
+      .post(
         "http://localhost:4000/api/v1/getManager/uploadingProject",
         formData,
         {
           withCredentials: true,
         }
-      );
-      if (response.status === 200) {
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          alert("uploaded succesfully");
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      })
+      .finally(() => {
         setFormData({
           clientName: "",
           projectName: "",
           address: "",
           isBillable: false,
         });
-        alert("uploaded succesfully");
-      }
-    } catch (error) {
-      if (error.response.status === 409) alert("project already exists");
-      else alert("failed to upload the project");
-      setFormData({
-        clientName: "",
-        projectName: "",
-        address: "",
-        isBillable: false,
       });
-    }
   };
-
   return (
     <Box
       display="flex"

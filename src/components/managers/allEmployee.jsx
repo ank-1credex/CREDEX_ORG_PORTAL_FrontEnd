@@ -16,9 +16,9 @@ import axios from "axios";
 // eslint-disable-next-line react/prop-types
 const AllEmployee = ({ setEmployeeData }) => {
   const context = useContext(AuthContext);
-  const handleEmployeeClick = async (employeeName) => {
-    try {
-      const response = await axios.post(
+  const handleEmployeeClick = (employeeName) => {
+    axios
+      .post(
         `http://localhost:4000/api/v1/getManager/allContributionByEmployee`,
         {
           name: employeeName,
@@ -26,12 +26,14 @@ const AllEmployee = ({ setEmployeeData }) => {
         {
           withCredentials: true,
         }
-      );
-      setEmployeeData(response.data.contributiions);
-    } catch (error) {
-      // alert("something went wrong");
-      setEmployeeData(null);
-    }
+      )
+      .then((response) => {
+        setEmployeeData(response.data.contributiions);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setEmployeeData(null);
+      });
   };
   return (
     <Box
@@ -52,10 +54,10 @@ const AllEmployee = ({ setEmployeeData }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>FIRST_NAME</TableCell>
-              <TableCell>LAST_NAME</TableCell>
-              <TableCell>EMPLOYEE_ID</TableCell>
-              <TableCell>CONTRIBUTIONS</TableCell>
+              <TableCell>FIRSTNAME</TableCell>
+              <TableCell>LASTNAME</TableCell>
+              <TableCell>employeeId</TableCell>
+              <TableCell>CONTRIB</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -71,6 +73,7 @@ const AllEmployee = ({ setEmployeeData }) => {
                     }}
                     component={Link}
                     to="/managers/employees/table"
+                    variant="outlined"
                   >
                     View
                   </Button>

@@ -1,14 +1,16 @@
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
-import IconButton from "@mui/material/IconButton";
+import { AccountCircle } from "@mui/icons-material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Menu,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
 import AuthContext from "../authContext/authContext";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 // eslint-disable-next-line react/prop-types
 const Navbar = ({ handleLogout }) => {
   let context = useContext(AuthContext);

@@ -12,6 +12,14 @@ import {
 import axios from "axios";
 import AuthContext from "../authContext/authContext";
 
+import { styled } from "@mui/material/styles";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  border: "1px solid rgba(224, 224, 224, 1)",
+  textAlign: "center",
+  backgroundColor: theme.palette.action.hover,
+}));
+
 const AllContributionOfEmployee = () => {
   const [allContributions, setAllContributions] = useState([]);
   const context = useContext(AuthContext);
@@ -50,27 +58,33 @@ const AllContributionOfEmployee = () => {
       <TableContainer
         component={Paper}
         sx={{
-          maxWidth: "800px",
+          maxWidth: "1000px",
         }}
       >
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ProjectId</TableCell>
-              <TableCell>Hours</TableCell>
-              <TableCell>Message</TableCell>
-              <TableCell>Applied_Date</TableCell>
-              <TableCell>Status</TableCell>
+              <StyledTableCell>ProjectId</StyledTableCell>
+              <StyledTableCell>Hours</StyledTableCell>
+              <StyledTableCell>Message</StyledTableCell>
+              <StyledTableCell>Applied_Date</StyledTableCell>
+              <StyledTableCell>Status</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {allContributions.map((employee) => (
               <TableRow key={employee.id}>
-                <TableCell>{employee.project_id}</TableCell>
-                <TableCell>{employee.hours}</TableCell>
-                <TableCell>{employee.message}</TableCell>
-                <TableCell>{employee.applied_date}</TableCell>
-                <TableCell>{employee.status}</TableCell>
+                <StyledTableCell>{employee.project_id}</StyledTableCell>
+                <StyledTableCell>{employee.hours}</StyledTableCell>
+                <StyledTableCell>{employee.message}</StyledTableCell>
+                <StyledTableCell>{employee.applied_date}</StyledTableCell>
+                <StyledTableCell
+                  style={{
+                    color: employee.status === "rejected" ? "red" : "inherit",
+                  }}
+                >
+                  {employee.status}
+                </StyledTableCell>
               </TableRow>
             ))}
           </TableBody>

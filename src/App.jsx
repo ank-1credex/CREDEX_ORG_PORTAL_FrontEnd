@@ -1,3 +1,5 @@
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "./components/navbar/navbar";
 import Login from "./components/Authentication/login";
 import Registration from "./components/Authentication/signup";
@@ -5,15 +7,12 @@ import Managers from "./components/managers/managers";
 import ProjectUploadForm from "./components/managers/projectUpload";
 import EmployeeDash from "./components/employee/employeedashboard";
 import CreateContribution from "./components/employee/createContribution";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import AuthContext from "./components/authContext/authContext";
 import PrivateRoute from "./components/privateRoutes/privateRoutes";
 import AllContributions from "./components/employee/allContributionOfEmployee";
 import ProjectList from "./components/managers/projectList";
 import AllEmployee from "./components/managers/allEmployee";
 import EmployeeTable from "./components/managers/employeeTable";
-// import Cookies from "js-cookie";
 
 function App() {
   const navigate = useNavigate();
@@ -37,12 +36,6 @@ function App() {
     });
     navigate("/");
   };
-
-  // useEffect(() => {
-  //   if (Cookies.get("token")) {
-  //     setIsLoggedIn(true);
-  //   }
-  // }, []);
   return (
     <AuthContext.Provider
       value={{

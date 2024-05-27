@@ -1,7 +1,5 @@
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 import { useEffect, useContext } from "react";
+import { Container, Box, Typography } from "@mui/material";
 import AuthContext from "../authContext/authContext";
 import axios from "axios";
 

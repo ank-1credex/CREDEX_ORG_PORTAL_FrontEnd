@@ -12,8 +12,8 @@ import {
   MenuItem,
   Button,
   Box,
+  Typography,
 } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import axios from "axios";
 const EmployeeTable = ({ employeeData }) => {
   const [editedStatus, setEditedStatus] = useState({});
@@ -25,11 +25,10 @@ const EmployeeTable = ({ employeeData }) => {
     });
   };
 
-  const handleSaveStatus = async (Id, employeeId, ProjectId) => {
+  const handleSaveStatus = (Id, employeeId, ProjectId) => {
     const newStatus = editedStatus[Id];
-    console.log(newStatus);
-    try {
-      const response = await axios.post(
+    axios
+      .post(
         "http://localhost:4000/api/v1/getManager/updateTheOrgData",
         {
           status: newStatus,
@@ -40,12 +39,13 @@ const EmployeeTable = ({ employeeData }) => {
         {
           withCredentials: true,
         }
-      );
-      if (response.status === 200) alert("succesfully updated");
-      else alert("failed to update it ");
-    } catch (error) {
-      console.log(error);
-    }
+      )
+      .then((response) => {
+        if (response.status == 200) alert("succesfully updated");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   if (!employeeData) {
