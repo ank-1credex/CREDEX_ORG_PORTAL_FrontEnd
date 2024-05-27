@@ -1,13 +1,12 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import EmployeeTable from "./employeeTable";
 import { useEffect, useContext } from "react";
 import AuthContext from "../authContext/authContext";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-const Managers = ({ employeeData, setEmployees }) => {
+const Managers = ({setEmployees }) => {
   const context = useContext(AuthContext);
   useEffect(() => {
     if (context.isLoggedIn) {
@@ -23,6 +22,7 @@ const Managers = ({ employeeData, setEmployees }) => {
         )
         .then((response) => {
           setEmployees(response.data.data);
+          console.log(response.data.data);
         })
         .catch((error) => {
           console.error(
@@ -47,7 +47,6 @@ const Managers = ({ employeeData, setEmployees }) => {
         <Typography component="p" variant="h3">
           Welcome Managers
         </Typography>
-        <EmployeeTable employeeData={employeeData} />
       </Box>
     </Container>
   );

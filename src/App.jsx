@@ -11,6 +11,8 @@ import AuthContext from "./components/authContext/authContext";
 import PrivateRoute from "./components/privateRoutes/privateRoutes";
 import AllContributions from "./components/employee/allContributionOfEmployee";
 import ProjectList from "./components/managers/projectList";
+import AllEmployee from "./components/managers/allEmployee";
+import EmployeeTable from "./components/managers/employeeTable";
 // import Cookies from "js-cookie";
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
   //   }
   // }, []);
 
+  console.log(employeeData);
   return (
     <AuthContext.Provider
       value={{ isLoggedIn: isLoggedIn, employees: employees }}
@@ -75,6 +78,14 @@ function App() {
           />
           <Route path="/viewcontributions" element={<AllContributions />} />
           <Route path="/projectlists" element={<ProjectList />} />
+          <Route
+            path="/managers/employees"
+            element={<AllEmployee setEmployeeData={setEmployeeData} />}
+          />
+          <Route
+            path="/managers/employees/table"
+            element={<EmployeeTable employeeData={employeeData} />}
+          />
         </Route>
       </Routes>
     </AuthContext.Provider>

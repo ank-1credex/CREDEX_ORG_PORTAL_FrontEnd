@@ -8,7 +8,7 @@ import {
   TableRow,
   Paper,
   Box,
-  Button,
+  // Button,
 } from "@mui/material";
 import axios from "axios";
 import AuthContext from "../authContext/authContext";
@@ -35,28 +35,28 @@ const ProjectList = () => {
     }
   }, []);
 
-  const deleteProject = (id, name) => {
-    axios
-      .delete("http://localhost:4000/api/v1/getManager/deleteProjects", {
-        data: { id: id, project_name: name },
-        withCredentials: true,
-      })
-      .then((response) => {
-        if (response.status == 200) {
-          alert(" succesfully deleted  !!! ");
-          axios
-            .get("http://localhost:4000/api/v1/getManager/getAllProjectList", {
-              withCredentials: true,
-            })
-            .then((response) => {
-              setProjectList(response.data.data);
-            });
-        }
-      })
-      .catch((error) => {
-        alert("failed to delete" + error);
-      });
-  };
+  // const deleteProject = (id, name) => {
+  //   axios
+  //     .delete("http://localhost:4000/api/v1/getManager/deleteProjects", {
+  //       data: { id: id, project_name: name },
+  //       withCredentials: true,
+  //     })
+  //     .then((response) => {
+  //       if (response.status == 200) {
+  //         alert(" succesfully deleted  !!! ");
+  //         axios
+  //           .get("http://localhost:4000/api/v1/getManager/getAllProjectList", {
+  //             withCredentials: true,
+  //           })
+  //           .then((response) => {
+  //             setProjectList(response.data.data);
+  //           });
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert("failed to delete" + error);
+  //     });
+  // };
 
   return (
     <Box
@@ -87,10 +87,8 @@ const ProjectList = () => {
               <TableRow key={project.id}>
                 <TableCell>{project.id}</TableCell>
                 <TableCell>{project.project_name}</TableCell>
-                <TableCell>
-                  {project.is_billable == 1 ? "true" : "false"}
-                </TableCell>
-                <TableCell>
+                <TableCell>{project.is_billable == 1 ? "Yes" : "No"}</TableCell>
+                {/* <TableCell>
                   <Button
                     color="error"
                     onClick={() => {
@@ -99,7 +97,7 @@ const ProjectList = () => {
                   >
                     Delete
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

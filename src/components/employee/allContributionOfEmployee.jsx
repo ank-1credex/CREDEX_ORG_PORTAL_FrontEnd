@@ -59,7 +59,6 @@ const AllContributionOfEmployee = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>userId</TableCell>
               <TableCell>ProjectId</TableCell>
               <TableCell>Hours</TableCell>
               <TableCell>Message</TableCell>
@@ -70,7 +69,6 @@ const AllContributionOfEmployee = () => {
           <TableBody>
             {allContributions.map((employee) => (
               <TableRow key={employee.id}>
-                <TableCell>{employee.user_id}</TableCell>
                 <TableCell>{employee.project_id}</TableCell>
                 <TableCell>{employee.hours}</TableCell>
                 <TableCell>{employee.message}</TableCell>

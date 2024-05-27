@@ -9,46 +9,17 @@ import { useState, useContext } from "react";
 import IconButton from "@mui/material/IconButton";
 import AuthContext from "../authContext/authContext";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import axios from "axios";
-
 // eslint-disable-next-line react/prop-types
-const Navbar = ({ handleLogout, setEmployeeData, user }) => {
+const Navbar = ({ handleLogout, user }) => {
   let context = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorProfile, setAnchorProfile] = useState(null);
 
-  const handleMenuOpen = (event) => {
+  const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleMenu = (event) => {
-    setAnchorProfile(event.currentTarget);
-  };
-
   const handleClose = () => {
-    setAnchorProfile(null);
-  };
-
-  const handleEmployeeClick = async (employeeName) => {
-    handleMenuClose();
-    try {
-      const response = await axios.post(
-        `http://localhost:4000/api/v1/getManager/allContributionByEmployee`,
-        {
-          name: employeeName,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      setEmployeeData(response.data.contributiions);
-    } catch (error) {
-      console.error("Error fetching employee data:", error);
-    }
+    setAnchorEl(null);
   };
 
   return (
@@ -72,30 +43,11 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
               <>
                 <Button
                   color="inherit"
-                  aria-controls="employee-menu"
-                  aria-haspopup="true"
-                  onClick={handleMenuOpen}
                   component={Link}
-                  to="/managers"
+                  to="managers/employees"
                 >
                   All Employees
                 </Button>
-                <Menu
-                  id="employee-menu"
-                  anchorEl={anchorEl}
-                  keepMounted
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                >
-                  {context.employees.map((employee) => (
-                    <MenuItem
-                      key={employee.id}
-                      onClick={() => handleEmployeeClick(employee.name)}
-                    >
-                      {employee.name}
-                    </MenuItem>
-                  ))}
-                </Menu>
                 <Button color="inherit" component={Link} to="/projectUpload">
                   Create Project
                 </Button>
@@ -122,10 +74,6 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
                 </Button>
               </>
             )}
-
-            {/* <Button color="inherit" onClick={handleLogout}>
-              Logout
-            </Button> */}
             <div>
               <IconButton
                 size="large"
@@ -140,7 +88,7 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
               </IconButton>
               <Menu
                 id="menu-appbar"
-                anchorEl={anchorProfile}
+                anchorEl={anchorEl}
                 anchorOrigin={{
                   vertical: "top",
                   horizontal: "right",
@@ -150,7 +98,7 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
                   vertical: "top",
                   horizontal: "right",
                 }}
-                open={Boolean(anchorProfile)}
+                open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleClose}>{user}</MenuItem>
