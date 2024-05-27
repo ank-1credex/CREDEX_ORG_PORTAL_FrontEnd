@@ -6,19 +6,31 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
+import IconButton from "@mui/material/IconButton";
 import AuthContext from "../authContext/authContext";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
 const Navbar = ({ handleLogout, setEmployeeData, user }) => {
   let context = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorProfile, setAnchorProfile] = useState(null);
+
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleMenu = (event) => {
+    setAnchorProfile(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorProfile(null);
   };
 
   const handleEmployeeClick = async (employeeName) => {
@@ -28,6 +40,9 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
         `http://localhost:4000/api/v1/getManager/allContributionByEmployee`,
         {
           name: employeeName,
+        },
+        {
+          withCredentials: true,
         }
       );
       setEmployeeData(response.data.contributiions);
@@ -35,7 +50,7 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
       console.error("Error fetching employee data:", error);
     }
   };
-  console.log(context.isLoggedIn);
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -108,9 +123,40 @@ const Navbar = ({ handleLogout, setEmployeeData, user }) => {
               </>
             )}
 
-            <Button color="inherit" onClick={handleLogout}>
+            {/* <Button color="inherit" onClick={handleLogout}>
               Logout
-            </Button>
+            </Button> */}
+            <div>
+              <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorProfile}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorProfile)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleClose}>{user}</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </div>
           </>
         )}
       </Toolbar>

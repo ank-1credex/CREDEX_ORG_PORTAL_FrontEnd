@@ -14,7 +14,6 @@ import axios from "axios";
 import AuthContext from "../authContext/authContext";
 
 const ProjectList = () => {
-  console.log("ankit");
   const [projectList, setProjectList] = useState([]);
   const context = useContext(AuthContext);
 

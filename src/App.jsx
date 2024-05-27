@@ -6,20 +6,22 @@ import ProjectUploadForm from "./components/managers/projectUpload";
 import EmployeeDash from "./components/employee/employeedashboard";
 import CreateContribution from "./components/employee/createContribution";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AuthContext from "./components/authContext/authContext";
 import PrivateRoute from "./components/privateRoutes/privateRoutes";
 import AllContributions from "./components/employee/allContributionOfEmployee";
 import ProjectList from "./components/managers/projectList";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 function App() {
   const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [employeeData, setEmployeeData] = useState(null);
-  const [user, setUser] = useState("employee");
-
+  const [user, setUser] = useState({
+    name: "",
+    role: "employee",
+  });
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -27,15 +29,18 @@ function App() {
     setIsLoggedIn(false);
     setEmployeeData(null);
     setEmployees([]);
-    setUser("employee");
+    setUser({
+      name: "",
+      role: "employee",
+    });
     navigate("/");
   };
 
-  useEffect(() => {
-    if (Cookies.get("token")) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (Cookies.get("token")) {
+  //     setIsLoggedIn(true);
+  //   }
+  // }, []);
 
   return (
     <AuthContext.Provider

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   TextField,
   Checkbox,
@@ -18,8 +18,11 @@ const ProjectUploadForm = () => {
     address: "",
     isBillable: false,
   });
-  
- 
+
+  // const [clients, setClients] = useState([]);
+
+  useEffect(() => {}, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
@@ -34,7 +37,10 @@ const ProjectUploadForm = () => {
     try {
       const response = await axios.post(
         "http://localhost:4000/api/v1/getManager/uploadingProject",
-        formData
+        formData,
+        {
+          withCredentials: true,
+        }
       );
       if (response.status === 200) {
         setFormData({
