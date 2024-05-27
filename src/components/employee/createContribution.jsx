@@ -54,7 +54,6 @@ const MyForm = () => {
         }
       )
       .then((response) => {
-        console.log(response.data);
         setFormData({
           projectName: "",
           Hours: "",
@@ -62,7 +61,7 @@ const MyForm = () => {
           Quarter: "",
         });
 
-        alert("contribution succesfully created");
+        if (response.status == 200) alert("contribution succesfully created");
       })
       .catch((error) => {
         console.error("Error submitting form", error);
