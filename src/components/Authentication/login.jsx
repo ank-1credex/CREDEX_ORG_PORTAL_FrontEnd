@@ -25,33 +25,33 @@ export default function SignIn({ handleLogin, setCurrentUser }) {
       email: data.get("email"),
       password: data.get("password"),
     };
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/user/login",
-        payload,
-        {
-          withCredentials: true,
+    axios
+      .post("http://localhost:4000/api/v1/user/login", payload, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          if (response.data.data.role === "employee") {
+            setCurrentUser({
+              name: response.data.data.name,
+              role: response.data.data.role,
+            });
+            navigate("/employee");
+          } else if (response.data.data.role === "manager") {
+            setCurrentUser({
+              name: response.data.data.name,
+              role: response.data.data.role,
+            });
+            navigate("/managers");
+          }
+          handleLogin();
+        } else {
+          alert("login failed");
         }
-      );
-      if (response.status === 200) {
-        if (response.data.data.role === "employee") {
-          setCurrentUser({
-            name: response.data.data.name,
-            role: response.data.data.role,
-          });
-          navigate("/employee");
-        } else if (response.data.data.role === "manager") {
-          setCurrentUser({
-            name: response.data.data.name,
-            role: response.data.data.role,
-          });
-          navigate("/managers");
-        }
-        handleLogin();
-      } else console.log("login failed");
-    } catch (error) {
-      alert("wrong credentails");
-    }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   return (

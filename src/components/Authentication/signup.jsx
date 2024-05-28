@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { LockOutlined as LockOutlinedIcon } from "@mui/icons-material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
@@ -10,6 +11,10 @@ import {
   Box,
   Typography,
   Container,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import axios from "axios";
 
@@ -17,7 +22,28 @@ const defaultTheme = createTheme();
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const handleSubmit = async (event) => {
+  const [managers, setManagers] = useState([]);
+  const [selectedManager, setSelectedManager] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/api/v1/user/getManagers")
+      .then((response) => {
+        if (response.status == 200) {
+          setManagers(response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setManagers([]);
+      });
+  }, []);
+
+  const handleChange = (event) => {
+    setSelectedManager(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const payload = {
@@ -25,20 +51,18 @@ export default function SignUp() {
       lastName: data.get("lastName"),
       email: data.get("email"),
       password: data.get("password"),
-      managerName: data.get("managerName"),
+      managerName: selectedManager,
       employeeId: data.get("employeeID"),
     };
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/v1/user/signup",
-        payload
-      );
-      if (response.status === 200) {
-        navigate("/");
-      }
-    } catch (error) {
-      console.log("some error occured" + error);
-    }
+    console.log(payload);
+    axios
+      .post("http://localhost:4000/api/v1/user/signup", payload)
+      .then((response) => {
+        if (response.status == 200) navigate("/");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   return (
@@ -109,13 +133,22 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="managerName"
-                  label="Manager Name"
-                  id="managerName"
-                />
+                <FormControl required fullWidth>
+                  <InputLabel id="managerName-label">Manager Name</InputLabel>
+                  <Select
+                    labelId="managerName-label"
+                    id="managerName"
+                    name="managerName"
+                    value={selectedManager}
+                    onChange={handleChange}
+                  >
+                    {managers.map((manager) => (
+                      <MenuItem key={manager.id} value={manager.manager_name}>
+                        {manager.manager_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextField
