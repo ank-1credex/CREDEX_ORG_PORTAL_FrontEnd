@@ -8,7 +8,12 @@ import {
   TableRow,
   Paper,
   Box,
+  Button,
+  TextField,
+  Typography,
 } from "@mui/material";
+import UpdateIcon from "@mui/icons-material/Update";
+import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
 import AuthContext from "../authContext/authContext";
 
@@ -22,26 +27,71 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const AllContributionOfEmployee = () => {
   const [allContributions, setAllContributions] = useState([]);
+  const [project, setAllProject] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [newData, setNewData] = useState({ hours: "", message: "" });
+
   const context = useContext(AuthContext);
+
+  const handleEditClick = (employee) => {
+    setSelectedRow(employee.id);
+    setNewData({ hours: employee.hours, message: employee.message });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const fetchUserContribution = () => {
+    axios
+      .get(
+        "http://localhost:4000/api/v1/getEmployee/AllcontributionOfEmployee",
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        setAllContributions(response.data.data.allContribution);
+        setAllProject(response.data.data.Project);
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error fetching the contributions of this employee!",
+          error
+        );
+      });
+  };
+
+  const handleSaveClick = (id) => {
+    axios
+      .put(
+        "http://localhost:4000/api/v1/getEmployee/updateEmployeeContributionData",
+        {
+          id: id,
+          ...newData,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          setSelectedRow(null);
+          fetchUserContribution();
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
 
   useEffect(() => {
     if (context.isLoggedIn) {
-      axios
-        .get(
-          "http://localhost:4000/api/v1/getEmployee/AllcontributionOfEmployee",
-          {
-            withCredentials: true,
-          }
-        )
-        .then((response) => {
-          setAllContributions(response.data.data);
-        })
-        .catch((error) => {
-          console.error(
-            "There was an error fetching the contributions of this employee!",
-            error
-          );
-        });
+      fetchUserContribution();
     }
   }, []);
 
@@ -49,12 +99,22 @@ const AllContributionOfEmployee = () => {
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
+        // justifyContent: "center"
       }}
     >
+      <Typography
+        sx={{
+          marginBottom: "50px",
+          fontWeight: "bold",
+          marginTop: "50px",
+          letterSpacing: "0.1em",
+          fontSize: "24px",
+        }}
+      >
+        All contributions
+      </Typography>
       <TableContainer
         component={Paper}
         sx={{
@@ -64,26 +124,64 @@ const AllContributionOfEmployee = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell>ProjectId</StyledTableCell>
+              <StyledTableCell>ProjectName</StyledTableCell>
               <StyledTableCell>Hours</StyledTableCell>
               <StyledTableCell>Message</StyledTableCell>
               <StyledTableCell>Applied_Date</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
+              <StyledTableCell>Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {allContributions.map((employee) => (
               <TableRow key={employee.id}>
-                <StyledTableCell>{employee.project_id}</StyledTableCell>
-                <StyledTableCell>{employee.hours}</StyledTableCell>
-                <StyledTableCell>{employee.message}</StyledTableCell>
+                <StyledTableCell>
+                  {project[employee.project_id - 1].project_name}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {selectedRow === employee.id ? (
+                    <TextField
+                      name="hours"
+                      value={newData.hours}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    employee.hours
+                  )}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {selectedRow === employee.id ? (
+                    <TextField
+                      name="message"
+                      value={newData.message}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    employee.message
+                  )}
+                </StyledTableCell>
                 <StyledTableCell>{employee.applied_date}</StyledTableCell>
-                <StyledTableCell
-                  style={{
-                    color: employee.status === "rejected" ? "red" : "inherit",
-                  }}
-                >
-                  {employee.status}
+                <StyledTableCell>{employee.status}</StyledTableCell>
+                <StyledTableCell>
+                  {selectedRow === employee.id ? (
+                    <Button
+                      onClick={() => {
+                        handleSaveClick(employee.id);
+                      }}
+                      startIcon={<SaveIcon />}
+                    >
+                      Save
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        handleEditClick(employee);
+                      }}
+                      startIcon={<UpdateIcon />}
+                    >
+                      Update
+                    </Button>
+                  )}
                 </StyledTableCell>
               </TableRow>
             ))}

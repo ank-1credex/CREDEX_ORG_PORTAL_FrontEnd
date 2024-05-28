@@ -63,10 +63,11 @@ const ProjectUploadForm = () => {
     <Box
       display="flex"
       justifyContent="center"
-      alignItems="center"
-      height="100vh"
+      marginTop="120px"
+      // alignItems="center"
+      // height="100vh"
     >
-      <Paper elevation={2} style={{ maxWidth: 500, padding: 20 }}>
+      <Paper elevation={2} style={{ maxWidth: 600, padding: 20 }}>
         <Typography variant="h5" gutterBottom align="centre">
           Create Project
         </Typography>

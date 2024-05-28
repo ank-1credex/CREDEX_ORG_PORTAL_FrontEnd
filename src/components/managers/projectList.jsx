@@ -62,9 +62,8 @@ const ProjectList = () => {
       sx={{
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh",
+        marginTop: "100px",
       }}
     >
       <TableContainer
@@ -76,27 +75,27 @@ const ProjectList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>SN No.</TableCell>
-              <TableCell>Project Name</TableCell>
-              <TableCell>Billable</TableCell>
+              <TableCell sx={{ fontWeight: "bold", alignItem: "center" }}>
+                SN No.
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", alignItem: "center" }}>
+                Project Name
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold", alignItem: "center" }}>
+                Billable
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {projectList.map((project) => (
               <TableRow key={project.id}>
-                <TableCell>{project.id}</TableCell>
-                <TableCell>{project.project_name}</TableCell>
-                <TableCell>{project.is_billable == 1 ? "Yes" : "No"}</TableCell>
-                {/* <TableCell>
-                  <Button
-                    color="error"
-                    onClick={() => {
-                      deleteProject(project.id, project.project_name);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </TableCell> */}
+                <TableCell sx={{ alignItem: "center" }}>{project.id}</TableCell>
+                <TableCell sx={{ alignItem: "center" }}>
+                  {project.project_name}
+                </TableCell>
+                <TableCell sx={{ alignItem: "center" }}>
+                  {project.is_billable == 1 ? "Yes" : "No"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

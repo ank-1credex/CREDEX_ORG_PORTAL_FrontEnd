@@ -14,7 +14,17 @@ import {
   Box,
   Typography,
 } from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
+import { styled } from "@mui/material/styles";
+
+const StyledTableCell = styled(TableCell)(() => ({
+  // border: "1px solid rgba(224, 224, 224, 1)",
+  textAlign: "center",
+  fontWeight: "bold",
+  // backgroundColor: theme.palette.action.hover,
+}));
+
 const EmployeeTable = ({ employeeData }) => {
   const [editedStatus, setEditedStatus] = useState({});
 
@@ -56,7 +66,7 @@ const EmployeeTable = ({ employeeData }) => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: "100vh",
+          marginTop: "300px",
         }}
       >
         <Typography variant="h4">NO Contrubution By this User</Typography>
@@ -71,7 +81,7 @@ const EmployeeTable = ({ employeeData }) => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh",
+        marginTop: "70px",
       }}
     >
       <TableContainer
@@ -83,21 +93,30 @@ const EmployeeTable = ({ employeeData }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ProjectId</TableCell>
-              <TableCell>Hours</TableCell>
-              <TableCell>Message</TableCell>
-              <TableCell>Applied_Date</TableCell>
-              <TableCell>Status</TableCell>
+              <StyledTableCell>ProjectId</StyledTableCell>
+              <StyledTableCell>Hours</StyledTableCell>
+              <StyledTableCell>Message</StyledTableCell>
+              <StyledTableCell>Applied_Date</StyledTableCell>
+              <StyledTableCell>Status</StyledTableCell>
+              <StyledTableCell>Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {employeeData.map((employee) => (
               <TableRow key={employee.id}>
-                <TableCell>{employee.project_id}</TableCell>
-                <TableCell>{employee.hours}</TableCell>
-                <TableCell>{employee.message}</TableCell>
-                <TableCell>{employee.applied_date}</TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.project_id}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.hours}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.message}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.applied_date}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
                   <Select
                     value={editedStatus[employee.id] || employee.status}
                     onChange={(e) => handleStatusChange(employee.id, e)}
@@ -107,7 +126,7 @@ const EmployeeTable = ({ employeeData }) => {
                     <MenuItem value="rejected">Rejected</MenuItem>
                   </Select>
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
                   <Button
                     onClick={() =>
                       handleSaveStatus(
@@ -116,6 +135,7 @@ const EmployeeTable = ({ employeeData }) => {
                         employee.project_id
                       )
                     }
+                    startIcon={<SaveIcon />}
                   >
                     Save
                   </Button>

@@ -12,6 +12,7 @@ import {
   Box,
   Button,
 } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 // eslint-disable-next-line react/prop-types
 const AllEmployee = ({ setEmployeeData }) => {
@@ -40,9 +41,8 @@ const AllEmployee = ({ setEmployeeData }) => {
       sx={{
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh",
+        marginTop: "70px",
       }}
     >
       <TableContainer
@@ -54,19 +54,33 @@ const AllEmployee = ({ setEmployeeData }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>FIRSTNAME</TableCell>
-              <TableCell>LASTNAME</TableCell>
-              <TableCell>employeeId</TableCell>
-              <TableCell>CONTRIB</TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                FIRSTNAME
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                LASTNAME
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                employeeId
+              </TableCell>
+              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
+                Action
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {context.employees.map((employee) => (
               <TableRow key={employee.id}>
-                <TableCell>{employee.first_name}</TableCell>
-                <TableCell>{employee.last_name}</TableCell>
-                <TableCell>{employee.employee_id}</TableCell>
-                <TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.first_name}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.last_name}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
+                  {employee.employee_id}
+                </TableCell>
+                <TableCell sx={{ textAlign: "center" }}>
                   <Button
                     onClick={() => {
                       handleEmployeeClick(employee.first_name);
@@ -74,6 +88,7 @@ const AllEmployee = ({ setEmployeeData }) => {
                     component={Link}
                     to="/managers/employees/table"
                     variant="outlined"
+                    startIcon={<VisibilityIcon />}
                   >
                     View
                   </Button>

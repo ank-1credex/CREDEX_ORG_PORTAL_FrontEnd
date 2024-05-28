@@ -54,17 +54,20 @@ const MyForm = () => {
         }
       )
       .then((response) => {
+        if (response.status == 200) alert("contribution succesfully created");
+      })
+      .catch((error) => {
+        if (error.response.status === 409) {
+          alert("contribution for this project already exists ..!!");
+        }
+      })
+      .finally(() => {
         setFormData({
           projectName: "",
           Hours: "",
           Message: "",
           Quarter: "",
         });
-
-        if (response.status == 200) alert("contribution succesfully created");
-      })
-      .catch((error) => {
-        console.error("Error submitting form", error);
       });
   };
 
