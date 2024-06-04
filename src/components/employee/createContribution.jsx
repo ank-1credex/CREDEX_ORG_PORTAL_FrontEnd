@@ -163,7 +163,7 @@ const MyForm = () => {
                 <em>None</em>
               </MenuItem>
               <MenuItem value={"Draft"}>Draft</MenuItem>
-              <MenuItem value={"pending"}>Send</MenuItem>
+              <MenuItem value={"Pending"}>Send</MenuItem>
             </Select>
           </FormControl>
           <Button

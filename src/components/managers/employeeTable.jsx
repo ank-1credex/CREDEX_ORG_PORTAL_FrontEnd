@@ -7,7 +7,7 @@ import { DataGrid, gridClasses } from "@mui/x-data-grid";
 
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-const EmployeeTable = ({ employeeData }) => {
+const EmployeeTable = ({ employeeData, employeeName }) => {
   const [editedStatus, setEditedStatus] = useState({});
   const handleStatusChange = (employeeId, event) => {
     setEditedStatus({
@@ -123,7 +123,7 @@ const EmployeeTable = ({ employeeData }) => {
           fontSize: "24px",
         }}
       >
-        Employees Contribution
+        {`${employeeName}'s Contribution`}
       </Typography>
       <Box>
         <DataGrid

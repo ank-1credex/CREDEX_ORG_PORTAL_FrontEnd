@@ -6,9 +6,10 @@ import { Box, Button, Typography } from "@mui/material";
 import AuthContext from "../authContext/authContext";
 import axios from "axios";
 // eslint-disable-next-line react/prop-types
-const AllEmployee = ({ setEmployeeData }) => {
+const AllEmployee = ({ setEmployeeData, setEmployeeName }) => {
   const context = useContext(AuthContext);
   const handleEmployeeClick = (employeeName) => {
+    setEmployeeName(null);
     axios
       .post(
         `http://localhost:4000/api/v1/getManager/allContributionByEmployee`,
@@ -21,6 +22,7 @@ const AllEmployee = ({ setEmployeeData }) => {
       )
       .then((response) => {
         setEmployeeData(response.data.contributiions);
+        setEmployeeName(employeeName);
       })
       .catch((error) => {
         console.log(error.message);

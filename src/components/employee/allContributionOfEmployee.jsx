@@ -187,7 +187,7 @@ const AllContributionOfEmployee = () => {
             onClick={() => {
               handleDeleteClick(id);
             }}
-            disabled={param.row.status === "pending"}
+            disabled={param.row.status === "Pending"}
             label="Delete"
             color="inherit"
           />,

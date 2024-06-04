@@ -23,6 +23,7 @@ function App() {
     name: "",
     role: "employee",
   });
+  const [employeeName, setEmployeeName] = useState();
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -76,11 +77,21 @@ function App() {
           <Route path="/projectlists" element={<ProjectList />} />
           <Route
             path="/managers/employees"
-            element={<AllEmployee setEmployeeData={setEmployeeData} />}
+            element={
+              <AllEmployee
+                setEmployeeData={setEmployeeData}
+                setEmployeeName={setEmployeeName}
+              />
+            }
           />
           <Route
             path="/managers/employees/table"
-            element={<EmployeeTable employeeData={employeeData} />}
+            element={
+              <EmployeeTable
+                employeeData={employeeData}
+                employeeName={employeeName}
+              />
+            }
           />
         </Route>
       </Routes>
