@@ -1,18 +1,9 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import { grey } from "@mui/material/colors";
+import { Box, Button, Typography } from "@mui/material";
 import AuthContext from "../authContext/authContext";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-  Button,
-} from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 // eslint-disable-next-line react/prop-types
 const AllEmployee = ({ setEmployeeData }) => {
@@ -36,68 +27,82 @@ const AllEmployee = ({ setEmployeeData }) => {
         setEmployeeData(null);
       });
   };
+
+  const columns = [
+    { field: "id", headerName: "ID", minWidth: 200 },
+    { field: "firstName", headerName: "First Name", minWidth: 200 },
+    { field: "lastName", headerName: "Last Name", minWidth: 200 },
+    { field: "employeeId", headerName: "Employee ID", minWidth: 200 },
+    {
+      field: "actions",
+      headerName: "Action",
+      minWidth: 150,
+      renderCell: (param) => (
+        <Button
+          onClick={() => {
+            handleEmployeeClick(param.row.firstName);
+          }}
+          component={Link}
+          to="/managers/employees/table"
+          variant="outlined"
+        >
+          View
+        </Button>
+      ),
+    },
+  ];
+
+  const rows = context.employees.map((employee) => ({
+    id: employee.id,
+    firstName: employee.first_name,
+    lastName: employee.last_name,
+    employeeId: employee.employee_id,
+  }));
+
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        marginTop: "70px",
+        flexDirection: "column",
+        marginTop: "50px",
+        alignItems: "center",
       }}
     >
-      <TableContainer
-        component={Paper}
+      <Typography
         sx={{
-          maxWidth: "800px",
+          marginBottom: "50px",
+          fontWeight: "bold",
+          marginTop: "50px",
+          letterSpacing: "0.1em",
+          fontSize: "24px",
         }}
       >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                FIRSTNAME
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                LASTNAME
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                employeeId
-              </TableCell>
-              <TableCell sx={{ textAlign: "center", fontWeight: "bold" }}>
-                Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {context.employees.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.first_name}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.last_name}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.employee_id}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Button
-                    onClick={() => {
-                      handleEmployeeClick(employee.first_name);
-                    }}
-                    component={Link}
-                    to="/managers/employees/table"
-                    variant="outlined"
-                    startIcon={<VisibilityIcon />}
-                  >
-                    View
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        Employee List
+      </Typography>
+      <Box sx={{ maxWidth: "1000px" }}>
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          sx={{
+            "& .MuiDataGrid-columnHeaders": {
+              fontWeight: "bold",
+            },
+            [`& .${gridClasses.row}`]: {
+              bgcolor: grey[100],
+            },
+          }}
+          getRowSpacing={(params) => ({
+            top: params.isFirstVisible ? 0 : 5,
+            bottom: params.isLastVisible ? 0 : 5,
+          })}
+        />
+      </Box>
     </Box>
   );
 };

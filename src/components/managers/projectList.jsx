@@ -1,106 +1,141 @@
 import { useState, useEffect, useContext } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 import AuthContext from "../authContext/authContext";
-
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import SaveIcon from "@mui/icons-material/Save";
+import { grey } from "@mui/material/colors";
 const ProjectList = () => {
   const [projectList, setProjectList] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
   const context = useContext(AuthContext);
 
+  const fetchAllproject = () => {
+    axios
+      .get("http://localhost:4000/api/v1/getManager/getAllProjectList", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setProjectList(response.data.data);
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error fetching the contributions of this employee!",
+          error
+        );
+      });
+  };
   useEffect(() => {
     if (context.isLoggedIn) {
-      axios
-        .get("http://localhost:4000/api/v1/getManager/getAllProjectList", {
-          withCredentials: true,
-        })
-        .then((response) => {
-          setProjectList(response.data.data);
-        })
-        .catch((error) => {
-          console.error(
-            "There was an error fetching the contributions of this employee!",
-            error
-          );
-        });
+      fetchAllproject();
     }
   }, []);
 
-  // const deleteProject = (id, name) => {
-  //   axios
-  //     .delete("http://localhost:4000/api/v1/getManager/deleteProjects", {
-  //       data: { id: id, project_name: name },
-  //       withCredentials: true,
-  //     })
-  //     .then((response) => {
-  //       if (response.status == 200) {
-  //         alert(" succesfully deleted  !!! ");
-  //         axios
-  //           .get("http://localhost:4000/api/v1/getManager/getAllProjectList", {
-  //             withCredentials: true,
-  //           })
-  //           .then((response) => {
-  //             setProjectList(response.data.data);
-  //           });
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       alert("failed to delete" + error);
-  //     });
-  // };
+  const handleSaveClick = (param) => {
+    axios
+      .put(
+        "http://localhost:4000/api/v1/getManager/updateProjectname",
+        {
+          id: param.id,
+          project_name: param.row.projectName,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        fetchAllproject();
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error fetching the contributions of this employee!",
+          error
+        );
+      })
+      .finally(() => {
+        setSelectedRow(null);
+      });
+  };
 
+  const columns = [
+    { field: "id", headerName: "ID", minWidth: 150 },
+    {
+      field: "projectName",
+      headerName: "Project Name",
+      minWidth: 250,
+      editable: true,
+    },
+    { field: "isBillable", headerName: "Is Billable", minWidth: 250 },
+    {
+      field: "action",
+      headerName: "Actions",
+      minWidth: 150,
+      align: "left",
+      renderCell: (param) => (
+        <Button
+          onClick={() => {
+            handleSaveClick(param);
+          }}
+          disabled={selectedRow != param.id}
+          startIcon={<SaveIcon />}
+        ></Button>
+      ),
+    },
+  ];
+
+  const rows = projectList.map((project) => ({
+    id: project.id,
+    projectName: project.project_name,
+    isBillable: project.is_billable,
+  }));
+
+  function mySaveOnServerFunctio(updatedRow) {
+    setSelectedRow(updatedRow.id);
+  }
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        marginTop: "100px",
+        flexDirection: "column",
+        marginTop: "50px",
+        alignItems: "center",
       }}
     >
-      <TableContainer
-        component={Paper}
+      <Typography
         sx={{
-          maxWidth: "450px",
+          marginBottom: "50px",
+          fontWeight: "bold",
+          marginTop: "50px",
+          letterSpacing: "0.1em",
+          fontSize: "24px",
         }}
       >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", alignItem: "center" }}>
-                SN No.
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", alignItem: "center" }}>
-                Project Name
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", alignItem: "center" }}>
-                Billable
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {projectList.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell sx={{ alignItem: "center" }}>{project.id}</TableCell>
-                <TableCell sx={{ alignItem: "center" }}>
-                  {project.project_name}
-                </TableCell>
-                <TableCell sx={{ alignItem: "center" }}>
-                  {project.is_billable == 1 ? "Yes" : "No"}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        Project List
+      </Typography>
+      <Box sx={{ height: 400, maxWidth: "900px" }}>
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          sx={{
+            "--DataGrid-overlayHeight": "300px",
+            [`& .${gridClasses.row}`]: {
+              bgcolor: grey[100],
+            },
+          }}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          onCellEditStart={(cellParams) => mySaveOnServerFunctio(cellParams)}
+          getRowSpacing={(params) => ({
+            top: params.isFirstVisible ? 0 : 5,
+            bottom: params.isLastVisible ? 0 : 5,
+          })}
+        ></DataGrid>
+      </Box>
     </Box>
   );
 };

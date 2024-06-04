@@ -23,9 +23,11 @@ function App() {
     name: "",
     role: "employee",
   });
+
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setEmployeeData(null);
@@ -36,6 +38,7 @@ function App() {
     });
     navigate("/");
   };
+
   return (
     <AuthContext.Provider
       value={{

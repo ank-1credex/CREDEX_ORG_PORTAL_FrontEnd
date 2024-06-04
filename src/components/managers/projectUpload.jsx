@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   TextField,
   Checkbox,
@@ -18,11 +18,6 @@ const ProjectUploadForm = () => {
     address: "",
     isBillable: false,
   });
-
-  // const [clients, setClients] = useState([]);
-
-  useEffect(() => {}, []);
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;

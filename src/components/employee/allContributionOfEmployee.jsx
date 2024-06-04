@@ -1,50 +1,25 @@
 import { useState, useEffect, useContext } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Box,
-  Button,
-  TextField,
-  Typography,
-} from "@mui/material";
-import UpdateIcon from "@mui/icons-material/Update";
-import SaveIcon from "@mui/icons-material/Save";
+import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import AuthContext from "../authContext/authContext";
-
-import { styled } from "@mui/material/styles";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  border: "1px solid rgba(224, 224, 224, 1)",
-  textAlign: "center",
-  backgroundColor: theme.palette.action.hover,
-}));
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRowModes,
+  gridClasses,
+  GridRowEditStopReasons,
+} from "@mui/x-data-grid";
+import { grey } from "@mui/material/colors";
 
 const AllContributionOfEmployee = () => {
+  const context = useContext(AuthContext);
   const [allContributions, setAllContributions] = useState([]);
   const [project, setAllProject] = useState([]);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [newData, setNewData] = useState({ hours: "", message: "" });
-
-  const context = useContext(AuthContext);
-
-  const handleEditClick = (employee) => {
-    setSelectedRow(employee.id);
-    setNewData({ hours: employee.hours, message: employee.message });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const [rowModesModel, setRowModesModel] = useState({});
 
   const fetchUserContribution = () => {
     axios
@@ -66,26 +41,24 @@ const AllContributionOfEmployee = () => {
       });
   };
 
-  const handleSaveClick = (id) => {
+  const deleteContribution = (id) => {
     axios
-      .put(
-        "http://localhost:4000/api/v1/getEmployee/updateEmployeeContributionData",
+      .delete(
+        "http://localhost:4000/api/v1/getEmployee/deleteEmployeeContributionData",
         {
-          id: id,
-          ...newData,
-        },
-        {
+          data: { id: id },
           withCredentials: true,
         }
       )
       .then((response) => {
-        if (response.status === 200) {
-          setSelectedRow(null);
-          fetchUserContribution();
-        }
+        console.log(response);
+        fetchUserContribution();
       })
       .catch((error) => {
-        console.log(error.message);
+        console.error(
+          "There was an error fetching the contributions of this employee!",
+          error
+        );
       });
   };
 
@@ -93,7 +66,145 @@ const AllContributionOfEmployee = () => {
     if (context.isLoggedIn) {
       fetchUserContribution();
     }
-  }, []);
+  }, [context.isLoggedIn]);
+
+  const handleRowEditStop = (params, event) => {
+    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+      event.defaultMuiPrevented = true;
+    }
+  };
+
+  const handleEditClick = (id) => {
+    setRowModesModel((prevModel) => ({
+      ...prevModel,
+      [id]: { mode: GridRowModes.Edit },
+    }));
+  };
+
+  const handleCancelClick = (id) => {
+    setRowModesModel((prevModel) => ({
+      ...prevModel,
+      [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    }));
+  };
+
+  const handleSaveClick = (id) => {
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+  };
+
+  const handleDeleteClick = (id) => {
+    deleteContribution(id);
+  };
+  const processRowUpdate = (newRow, oldRow) => {
+    console.log(oldRow);
+    axios
+      .put(
+        "http://localhost:4000/api/v1/getEmployee/updateEmployeeContributionData",
+        {
+          id: newRow.id,
+          hours: newRow.hours,
+          message: newRow.message,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        if (response.status === 200) {
+          fetchUserContribution();
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+    return newRow;
+  };
+
+  const handleRowModesModelChange = (newRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+  };
+
+  const columns = [
+    { field: "id", headerName: "ID", minWidth: 40 },
+    { field: "projectName", headerName: "Project Name", minWidth: 120 },
+    { field: "hours", headerName: "Hours", minWidth: 120, editable: true },
+    { field: "message", headerName: "Message", minWidth: 120, editable: true },
+    { field: "day", headerName: "Day", minWidth: 120 },
+    { field: "status", headerName: "Status", minWidth: 120 },
+    { field: "date", headerName: "Date", minWidth: 170 },
+    {
+      field: "action",
+      headerName: "Actions",
+      type: "actions",
+      minWidth: 150,
+      cellClassName: "actions",
+      getActions: (param) => {
+        const id = param.row.id;
+        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+        if (isInEditMode) {
+          return [
+            <GridActionsCellItem
+              key={`save-${id}`}
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{
+                color: "primary.main",
+              }}
+              onClick={() => {
+                handleSaveClick(id);
+              }}
+            />,
+            <GridActionsCellItem
+              key={`cancel-${id}`}
+              icon={<CancelIcon />}
+              label="Cancel"
+              className="textPrimary"
+              color="inherit"
+              onClick={() => {
+                handleCancelClick(id);
+              }}
+            />,
+          ];
+        }
+
+        return [
+          <GridActionsCellItem
+            key={`edit-${id}`}
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            color="inherit"
+            onClick={() => {
+              handleEditClick(id);
+            }}
+            disabled={param.row.status != "Draft"}
+          />,
+
+          <GridActionsCellItem
+            key={`delete-${id}`}
+            icon={<DeleteIcon />}
+            onClick={() => {
+              handleDeleteClick(id);
+            }}
+            disabled={param.row.status === "pending"}
+            label="Delete"
+            color="inherit"
+          />,
+        ];
+      },
+    },
+  ];
+
+  const rows = allContributions.map((employee) => ({
+    id: employee.id,
+    projectName: project[employee.project_id - 1].project_name,
+    hours: employee.hours,
+    message: employee.message,
+    day: employee.day,
+    status: employee.status,
+    date: employee.applied_date,
+  }));
 
   return (
     <Box
@@ -101,7 +212,6 @@ const AllContributionOfEmployee = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        // justifyContent: "center"
       }}
     >
       <Typography
@@ -115,79 +225,35 @@ const AllContributionOfEmployee = () => {
       >
         All contributions
       </Typography>
-      <TableContainer
-        component={Paper}
-        sx={{
-          maxWidth: "1000px",
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>ProjectName</StyledTableCell>
-              <StyledTableCell>Hours</StyledTableCell>
-              <StyledTableCell>Message</StyledTableCell>
-              <StyledTableCell>Applied_Date</StyledTableCell>
-              <StyledTableCell>Status</StyledTableCell>
-              <StyledTableCell>Action</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {allContributions.map((employee) => (
-              <TableRow key={employee.id}>
-                <StyledTableCell>
-                  {project[employee.project_id - 1].project_name}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {selectedRow === employee.id ? (
-                    <TextField
-                      name="hours"
-                      value={newData.hours}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    employee.hours
-                  )}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {selectedRow === employee.id ? (
-                    <TextField
-                      name="message"
-                      value={newData.message}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    employee.message
-                  )}
-                </StyledTableCell>
-                <StyledTableCell>{employee.applied_date}</StyledTableCell>
-                <StyledTableCell>{employee.status}</StyledTableCell>
-                <StyledTableCell>
-                  {selectedRow === employee.id ? (
-                    <Button
-                      onClick={() => {
-                        handleSaveClick(employee.id);
-                      }}
-                      startIcon={<SaveIcon />}
-                    >
-                      Save
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => {
-                        handleEditClick(employee);
-                      }}
-                      startIcon={<UpdateIcon />}
-                    >
-                      Update
-                    </Button>
-                  )}
-                </StyledTableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ height: 450 }}>
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={handleRowModesModelChange}
+          processRowUpdate={processRowUpdate}
+          onRowEditStop={handleRowEditStop}
+          onProcessRowUpdateError={(error) => {
+            console.log(error.message);
+          }}
+          onRowDoubleClick={(params, event) => {
+            event.defaultMuiPrevented = true;
+          }}
+          onCellDoubleClick={(params, event) => {
+            event.defaultMuiPrevented = true;
+          }}
+          sx={{
+            [`& .${gridClasses.row}`]: {
+              bgcolor: grey[100],
+            },
+          }}
+          getRowSpacing={(params) => ({
+            top: params.isFirstVisible ? 0 : 5,
+            bottom: params.isLastVisible ? 0 : 5,
+          })}
+        />
+      </Box>
     </Box>
   );
 };

@@ -1,33 +1,14 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Select,
-  MenuItem,
-  Button,
-  Box,
-  Typography,
-} from "@mui/material";
+import { Box, Typography, MenuItem, Select, Button } from "@mui/material";
+
+import { grey } from "@mui/material/colors";
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
+
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-import { styled } from "@mui/material/styles";
-
-const StyledTableCell = styled(TableCell)(() => ({
-  // border: "1px solid rgba(224, 224, 224, 1)",
-  textAlign: "center",
-  fontWeight: "bold",
-  // backgroundColor: theme.palette.action.hover,
-}));
-
 const EmployeeTable = ({ employeeData }) => {
   const [editedStatus, setEditedStatus] = useState({});
-
   const handleStatusChange = (employeeId, event) => {
     setEditedStatus({
       ...editedStatus,
@@ -35,16 +16,14 @@ const EmployeeTable = ({ employeeData }) => {
     });
   };
 
-  const handleSaveStatus = (Id, employeeId, ProjectId) => {
-    const newStatus = editedStatus[Id];
+  const handleSaveStatus = (params) => {
+    const newStatus = editedStatus[params.id];
     axios
       .post(
         "http://localhost:4000/api/v1/getManager/updateTheOrgData",
         {
           status: newStatus,
-          user_id: employeeId,
-          project_id: ProjectId,
-          is_approved: 1,
+          id: params.id,
         },
         {
           withCredentials: true,
@@ -74,77 +53,96 @@ const EmployeeTable = ({ employeeData }) => {
     );
   }
 
+  const options = ["Pending", "Rejected", "Approved"];
+  const columns = [
+    { field: "id", headerName: "id", minWidth: 100 },
+    { field: "projectId", headerName: "Project ID", minWidth: 100 },
+    { field: "hours", headerName: "Hours", minWidth: 100 },
+    { field: "message", headerName: "Message", minWidth: 200 },
+    { field: "appliedDate", headerName: "Applied Date", minWidth: 200 },
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 200,
+      editable: true,
+      renderCell: (params) => (
+        <Select
+          value={params.value}
+          onChange={(event) => {
+            handleStatusChange(params.id, event);
+          }}
+          fullWidth
+        >
+          {options.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      ),
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      minWidth: 100,
+      renderCell: (params) => (
+        <Button
+          onClick={() => {
+            handleSaveStatus(params);
+          }}
+          startIcon={<SaveIcon />}
+        ></Button>
+      ),
+    },
+  ];
+
+  const rows = employeeData.map((eachEmployee) => ({
+    id: eachEmployee.id,
+    projectId: eachEmployee.project_id,
+    hours: eachEmployee.hours,
+    message: eachEmployee.message,
+    appliedDate: eachEmployee.applied_date,
+    status: eachEmployee.status,
+  }));
+
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        marginTop: "70px",
+        marginTop: "40px",
       }}
     >
-      <TableContainer
-        component={Paper}
+      <Typography
         sx={{
-          maxWidth: "1000px",
+          marginBottom: "50px",
+          fontWeight: "bold",
+          marginTop: "50px",
+          letterSpacing: "0.1em",
+          fontSize: "24px",
         }}
       >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>ProjectId</StyledTableCell>
-              <StyledTableCell>Hours</StyledTableCell>
-              <StyledTableCell>Message</StyledTableCell>
-              <StyledTableCell>Applied_Date</StyledTableCell>
-              <StyledTableCell>Status</StyledTableCell>
-              <StyledTableCell>Action</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {employeeData.map((employee) => (
-              <TableRow key={employee.id}>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.project_id}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.hours}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.message}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  {employee.applied_date}
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Select
-                    value={editedStatus[employee.id] || employee.status}
-                    onChange={(e) => handleStatusChange(employee.id, e)}
-                  >
-                    <MenuItem value="pending">Pending</MenuItem>
-                    <MenuItem value="approved">Approved</MenuItem>
-                    <MenuItem value="rejected">Rejected</MenuItem>
-                  </Select>
-                </TableCell>
-                <TableCell sx={{ textAlign: "center" }}>
-                  <Button
-                    onClick={() =>
-                      handleSaveStatus(
-                        employee.id,
-                        employee.user_id,
-                        employee.project_id
-                      )
-                    }
-                    startIcon={<SaveIcon />}
-                  >
-                    Save
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        Employees Contribution
+      </Typography>
+      <Box>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          getRowSpacing={(params) => ({
+            top: params.isFirstVisible ? 0 : 5,
+            bottom: params.isLastVisible ? 0 : 5,
+          })}
+          sx={{
+            "& .MuiDataGrid-columnHeaders": {
+              fontWeight: "bold",
+            },
+            [`& .${gridClasses.row}`]: {
+              bgcolor: grey[100],
+            },
+          }}
+        ></DataGrid>
+      </Box>
     </Box>
   );
 };

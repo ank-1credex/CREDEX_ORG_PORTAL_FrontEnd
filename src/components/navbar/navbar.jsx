@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
 import { AccountCircle } from "@mui/icons-material";
+import { styled, alpha } from "@mui/material/styles";
+import InputBase from "@mui/material/InputBase";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   AppBar,
   Toolbar,
@@ -9,12 +12,72 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  List,
+  ListItemText,
+  ListItem,
+  Paper,
 } from "@mui/material";
 import AuthContext from "../authContext/authContext";
+
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(1),
+    width: "auto",
+  },
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
+}));
+
+const Dropdown = styled(Paper)(({ theme }) => ({
+  position: "absolute",
+  top: "100%",
+  left: 0,
+  right: 0,
+  zIndex: 1,
+  marginTop: theme.spacing(1),
+  maxHeight: 500,
+  overflowY: "auto",
+  maxWidth: "300px",
+}));
+
 // eslint-disable-next-line react/prop-types
 const Navbar = ({ handleLogout }) => {
   let context = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,6 +87,22 @@ const Navbar = ({ handleLogout }) => {
     setAnchorEl(null);
   };
 
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+    if (value === "") {
+      setFilteredEmployees([]);
+    } else {
+      const filtered = context.employees.filter((employee) =>
+        employee.first_name.toLowerCase().includes(value)
+      );
+      setFilteredEmployees(filtered);
+    }
+  };
+
+  const handleClick = (employee) => {
+    console.log(employee);
+  };
   return (
     <AppBar position="static">
       <Toolbar>
@@ -43,6 +122,33 @@ const Navbar = ({ handleLogout }) => {
           <>
             {context.currentUser.role === "manager" && (
               <>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ "aria-label": "search" }}
+                    onChange={handleSearch}
+                    value={searchTerm}
+                  />
+                </Search>
+                {searchTerm && (
+                  <Dropdown>
+                    <List>
+                      {filteredEmployees.map((employee) => (
+                        <ListItem
+                          button
+                          key={employee.id}
+                          onClick={() => handleClick(employee)}
+                        >
+                          <ListItemText primary={employee.first_name} />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Dropdown>
+                )}
+
                 <Button
                   color="inherit"
                   component={Link}

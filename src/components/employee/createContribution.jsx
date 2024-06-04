@@ -18,6 +18,7 @@ const MyForm = () => {
     Hours: "",
     Message: "",
     Quarter: "",
+    Status: "",
   });
 
   const [projects, setProjects] = useState([]);
@@ -67,6 +68,7 @@ const MyForm = () => {
           Hours: "",
           Message: "",
           Quarter: "",
+          Status: "",
         });
       });
   };
@@ -78,11 +80,10 @@ const MyForm = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          mt: 8,
+          margin: "30px",
           border: "1px solid black",
           padding: "16px",
           borderRadius: "8px",
-          // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
         <Typography component="h1" variant="h5">
@@ -146,6 +147,23 @@ const MyForm = () => {
               <MenuItem value={"Q2"}>Q2</MenuItem>
               <MenuItem value={"Q3"}>Q3</MenuItem>
               <MenuItem value={"Q4"}>Q4</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal" required>
+            <InputLabel id="status-label">Status</InputLabel>
+            <Select
+              labelId="status-label"
+              id="Status"
+              name="Status"
+              value={formData.Status}
+              onChange={handleChange}
+              label="Status"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={"Draft"}>Draft</MenuItem>
+              <MenuItem value={"pending"}>Send</MenuItem>
             </Select>
           </FormControl>
           <Button
