@@ -103,6 +103,7 @@ const Navbar = ({ handleLogout }) => {
   const handleClick = (employee) => {
     console.log(employee);
   };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -138,7 +139,6 @@ const Navbar = ({ handleLogout }) => {
                     <List>
                       {filteredEmployees.map((employee) => (
                         <ListItem
-                          button
                           key={employee.id}
                           onClick={() => handleClick(employee)}
                         >

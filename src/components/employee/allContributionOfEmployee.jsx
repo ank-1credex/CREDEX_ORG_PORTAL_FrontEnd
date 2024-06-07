@@ -132,6 +132,7 @@ const AllContributionOfEmployee = () => {
     { field: "day", headerName: "Day", minWidth: 120 },
     { field: "status", headerName: "Status", minWidth: 120 },
     { field: "date", headerName: "Date", minWidth: 170 },
+
     {
       field: "action",
       headerName: "Actions",
@@ -174,11 +175,11 @@ const AllContributionOfEmployee = () => {
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
-            color="inherit"
             onClick={() => {
               handleEditClick(id);
             }}
             disabled={param.row.status != "Draft"}
+            color="primary"
           />,
 
           <GridActionsCellItem
@@ -189,7 +190,7 @@ const AllContributionOfEmployee = () => {
             }}
             disabled={param.row.status === "Pending"}
             label="Delete"
-            color="inherit"
+            color="error"
           />,
         ];
       },
@@ -241,6 +242,9 @@ const AllContributionOfEmployee = () => {
             event.defaultMuiPrevented = true;
           }}
           onCellDoubleClick={(params, event) => {
+            event.defaultMuiPrevented = true;
+          }}
+          onCellKeyDown={(params, event) => {
             event.defaultMuiPrevented = true;
           }}
           sx={{

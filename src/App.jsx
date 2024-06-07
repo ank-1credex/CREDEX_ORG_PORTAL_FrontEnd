@@ -28,7 +28,6 @@ function App() {
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
-
   const handleLogout = () => {
     setIsLoggedIn(false);
     setEmployeeData(null);
@@ -37,6 +36,7 @@ function App() {
       name: "",
       role: "employee",
     });
+    setEmployeeName();
     navigate("/");
   };
 
@@ -90,6 +90,7 @@ function App() {
               <EmployeeTable
                 employeeData={employeeData}
                 employeeName={employeeName}
+                setEmployeeData={setEmployeeData}
               />
             }
           />

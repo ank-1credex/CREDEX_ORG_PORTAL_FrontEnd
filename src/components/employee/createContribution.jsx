@@ -100,6 +100,15 @@ const MyForm = () => {
             name="projectName"
             value={formData.projectName}
             onChange={handleChange}
+            SelectProps={{
+              MenuProps: {
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                  },
+                },
+              },
+            }}
             autoFocus
           >
             {projects.map((project) => (

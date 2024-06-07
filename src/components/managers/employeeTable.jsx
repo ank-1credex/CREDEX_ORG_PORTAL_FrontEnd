@@ -1,20 +1,36 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import { Box, Typography, MenuItem, Select, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  MenuItem,
+  Select,
+  Button,
+  TextField,
+} from "@mui/material";
 
 import { grey } from "@mui/material/colors";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-const EmployeeTable = ({ employeeData, employeeName }) => {
+const EmployeeTable = ({ employeeData, employeeName, setEmployeeData }) => {
   const [editedStatus, setEditedStatus] = useState({});
+  // const [remark, setRemark] = useState({});
+
   const handleStatusChange = (employeeId, event) => {
     setEditedStatus({
       ...editedStatus,
       [employeeId]: event.target.value,
     });
   };
+
+  // const handleRemarkChange = (params, event) => {
+  //   setRemark({
+  //     ...remark,
+  //     [params.id]: event.target.value,
+  //   });
+  // };
 
   const handleSaveStatus = (params) => {
     const newStatus = editedStatus[params.id];
@@ -24,13 +40,18 @@ const EmployeeTable = ({ employeeData, employeeName }) => {
         {
           status: newStatus,
           id: params.id,
+          name: employeeName,
+          // remark: remark[params.id],
         },
         {
           withCredentials: true,
         }
       )
       .then((response) => {
-        if (response.status == 200) alert("succesfully updated");
+        if (response.status == 200) {
+          setEmployeeData(response.data.data);
+          alert("succesfully updated");
+        }
       })
       .catch((error) => {
         alert(error.message);
@@ -53,7 +74,6 @@ const EmployeeTable = ({ employeeData, employeeName }) => {
     );
   }
 
-  const options = ["Pending", "Rejected", "Approved"];
   const columns = [
     { field: "id", headerName: "id", minWidth: 100 },
     { field: "projectId", headerName: "Project ID", minWidth: 100 },
@@ -64,22 +84,22 @@ const EmployeeTable = ({ employeeData, employeeName }) => {
       field: "status",
       headerName: "Status",
       minWidth: 200,
-      editable: true,
-      renderCell: (params) => (
-        <Select
-          value={params.value}
-          onChange={(event) => {
-            handleStatusChange(params.id, event);
-          }}
-          fullWidth
-        >
-          {options.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      ),
+      renderCell: (params) =>
+        params.value === "Pending" ? (
+          <Select
+            value={params.value}
+            onChange={(event) => {
+              handleStatusChange(params.id, event);
+            }}
+            fullWidth
+          >
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="Approved">Approved</MenuItem>
+            <MenuItem value="Rejected">Rejected</MenuItem>
+          </Select>
+        ) : (
+          <div>{params.row.status}</div>
+        ),
     },
     {
       field: "action",
@@ -91,19 +111,36 @@ const EmployeeTable = ({ employeeData, employeeName }) => {
             handleSaveStatus(params);
           }}
           startIcon={<SaveIcon />}
+          disabled={params.row.status !== "Pending"}
         ></Button>
+      ),
+    },
+    {
+      field: "remark",
+      headerName: "Remark",
+      minWidth: 200,
+      renderCell: (params) => (
+        <TextField
+          fullWidth
+          // onChange={(event) => {
+          //   // handleRemarkChange(params, event);
+          // }}
+          disabled={params.row.status !== "Pending"}
+        />
       ),
     },
   ];
 
-  const rows = employeeData.map((eachEmployee) => ({
-    id: eachEmployee.id,
-    projectId: eachEmployee.project_id,
-    hours: eachEmployee.hours,
-    message: eachEmployee.message,
-    appliedDate: eachEmployee.applied_date,
-    status: eachEmployee.status,
-  }));
+  const rows = employeeData.map((eachEmployee) => {
+    return {
+      id: eachEmployee.id,
+      projectId: eachEmployee.project_id,
+      hours: eachEmployee.hours,
+      message: eachEmployee.message,
+      appliedDate: eachEmployee.applied_date,
+      status: eachEmployee.status,
+    };
+  });
 
   return (
     <Box
@@ -112,6 +149,7 @@ const EmployeeTable = ({ employeeData, employeeName }) => {
         flexDirection: "column",
         alignItems: "center",
         marginTop: "40px",
+        height: "100vh",
       }}
     >
       <Typography
@@ -125,7 +163,7 @@ const EmployeeTable = ({ employeeData, employeeName }) => {
       >
         {`${employeeName}'s Contribution`}
       </Typography>
-      <Box>
+      <Box sx={{ maxHeight: "450px" }}>
         <DataGrid
           rows={rows}
           columns={columns}

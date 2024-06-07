@@ -93,6 +93,7 @@ const ProjectList = () => {
   function mySaveOnServerFunctio(updatedRow) {
     setSelectedRow(updatedRow.id);
   }
+  
   return (
     <Box
       sx={{
